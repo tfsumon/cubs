@@ -1,7 +1,6 @@
 ############# French navigation ##############
 # main menu
 [[main]]
-[[main]]
 name = "Home"
 url = ""
 weight = 1

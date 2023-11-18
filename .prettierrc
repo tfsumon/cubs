@@ -5,7 +5,8 @@
       "options": {
         "parser": "go-template",
         "goTemplateBracketSpacing": true,
-        "bracketSameLine": true
+        "bracketSameLine": true,
+        "htmlWhitespaceSensitivity": "ignore"
       }
     }
   ]
