@@ -10,6 +10,11 @@ name = "FAQ"
 url = "faq"
 weight = 2
 
+[[main]]
+name = "Misc Page"
+url = "misc/example-1/"
+weight = 3
+
 
 # footer menu
 [[footer]]
