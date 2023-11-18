@@ -8,13 +8,28 @@
             vh-100
           {{ end }} sidenav pt-4 pe-4 ps-0 border-end border-default">
           {{ $currentNode := . }}
-          {{ range (where .Site.Home.Sections.ByWeight "Params.exclude_from_menu" "!=" "true") }}
-            <!-- not render any single page, like contact page. -->
-            {{ $numberOfMainPages := len .Pages }}
-            {{ if eq $numberOfMainPages 0 }}
+          {{ $currentNodeSection := .Section }}
+
+          {{ with site.GetPage $currentNodeSection }}
+            {{ if .Params.dedicated_page }}
+              <!-- not render any single page, like contact page. -->
+              {{ $numberOfMainPages := len .Pages }}
+              {{ if ne $numberOfMainPages 0 }}
+                <!-- /not render any single page, like contact page. -->
+                {{ template "section-tree-nav" dict "sect" . "currentnode" $currentNode }}
+              {{ end }}
             {{ else }}
-              <!-- /not render any single page, like contact page. -->
-              {{ template "section-tree-nav" dict "sect" . "currentnode" $currentNode }}
+              {{ range (where .Site.Home.Sections.ByWeight "Params.exclude_from_menu" "!=" "true") }}
+                <!-- not render any page with front matter dedicated_page: true, like release-notes page. -->
+                {{ if not .Params.dedicated_page }}
+                  <!-- not render any single page, like contact page. -->
+                  {{ $numberOfMainPages := len .Pages }}
+                  {{ if ne $numberOfMainPages 0 }}
+                    <!-- /not render any single page, like contact page. -->
+                    {{ template "section-tree-nav" dict "sect" . "currentnode" $currentNode }}
+                  {{ end }}
+                {{ end }}
+              {{ end }}
             {{ end }}
           {{ end }}
         </ul>
