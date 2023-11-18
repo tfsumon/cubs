@@ -3,7 +3,7 @@
 {{- range $i, $e := .Pages -}}
 {{- if and (not .Params.ignoreSearch) (ne $e.Type "json") -}}
   {
-    "section": "",
+    "section": "{{$e.Section | humanize}}",
     "url": "{{ $e.Permalink }}",
     "title": "{{ with $e.Params.bannertext }}{{htmlEscape .}}{{else}}{{htmlEscape $e.Title}}{{end}}",
     "description": "{{ htmlEscape .Description}}",

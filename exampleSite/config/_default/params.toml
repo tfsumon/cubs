@@ -34,8 +34,8 @@ preloader = "" # use jpg, png, svg or gif format.
 
 # Navigation button
 [[nav_button]]
-label = "changelog" 
-link = "changelog/" 
+label = "Release Notes" 
+link = "release-notes/" 
 style = "outline" # available style: solid, outline
 
 [[nav_button]]
