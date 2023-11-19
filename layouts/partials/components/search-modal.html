@@ -51,11 +51,10 @@
 {{ $currentNode := . }}
 {{ $restrictedSearch := false }}
 {{ $currentNodeSection := .Section }}
-{{ $currentNodeTitle := "" }}
 
 {{ with site.GetPage $currentNodeSection }}
   {{ if .Params.restrictedSearch }}
-    {{ $currentNodeTitle = .Title | humanize }}
+    {{ $currentNodeSection = .Section | humanize }}
     {{ $restrictedSearch = true }}
   {{ end }}
 {{ end }}
@@ -67,7 +66,7 @@
   searchModal.addEventListener('shown.bs.modal', () => {searchInput.focus()});
 
   const restrictedSearch = {{$restrictedSearch}};
-  const currentSection = "{{$currentNodeTitle}}";
+  const currentSection = "{{$currentNodeSection}}";
 
   let jsonData = [];
   let indexJSON = {{"index.json" | relURL}};

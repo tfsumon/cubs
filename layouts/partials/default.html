@@ -55,9 +55,22 @@
           <nav class="pagination">
             <!-- Next prev page -->
             {{- $currentNode := . -}}
-            {{- template "menu-nextprev" dict "menu" .Site.Home "currentnode" $currentNode -}}
+            {{- $dedicated_page := false -}}
+            {{ with site.GetPage $currentNode.Section }}
+              {{ if .Params.dedicated_page }}
+                {{ $dedicated_page = . }}
+              {{ end }}
+            {{ end }}
+
+            {{ if $dedicated_page }}
+              {{- template "menu-nextprev" dict "menu" $dedicated_page "currentnode" $currentNode "dedicated_page" $dedicated_page -}}
+            {{ else }}
+              {{- template "menu-nextprev" dict "menu" .Site.Home "currentnode" $currentNode -}}
+            {{ end }}
             {{- define "menu-nextprev" -}}
               {{- $currentNode := .currentnode -}}
+              {{- $dedicated_page := .dedicated_page -}}
+
               {{- if ne .menu.Params.hidden true -}}
                 {{- if hasPrefix $currentNode.Permalink .menu.Permalink -}}
                   {{- $currentNode.Scratch.Set "NextPageOK" "OK" -}}
@@ -68,28 +81,39 @@
                     {{- $currentNode.Scratch.Set "nextPage" .menu -}}
                   {{- end -}}
                 {{- end -}}
+
                 {{- $currentNode.Scratch.Set "prevPageTmp" .menu -}}
                 {{- $currentNode.Scratch.Set "pages" .menu.Pages -}}
+
                 {{- if .menu.IsHome -}}
                   {{- $currentNode.Scratch.Set "pages" .menu.Sections -}}
                 {{- else if .menu.Sections -}}
                   {{- $currentNode.Scratch.Set "pages" (.menu.Pages | union .menu.Sections) -}}
                 {{- end -}}
+
                 {{- $pages := ($currentNode.Scratch.Get "pages") -}}
 
-                {{- range $pages.ByWeight -}}
-                  {{- template "menu-nextprev" dict "menu" . "currentnode" $currentNode -}}
-                {{- end -}}
+                {{ if $dedicated_page }}
+                  {{- range $pages.ByWeight -}}
+                    {{- template "menu-nextprev" dict "menu" . "currentnode" $currentNode -}}
+                  {{- end -}}
+                {{ else }}
+                  {{- range (where $pages.ByWeight "Params.exclude_from_menu" "!=" "true") -}}
+                    {{- template "menu-nextprev" dict "menu" . "currentnode" $currentNode -}}
+                  {{- end -}}
+                {{ end }}
               {{- end -}}
             {{- end -}}
 
-            {{- with ($.Scratch.Get "prevPage") -}}
-              <a class="nav nav-prev" href="{{ .RelPermalink }}">
-                <i class="fas fa-chevron-left me-2"></i>
-                <span class="d-none d-sm-block">{{ .Title }}</span>
-                <span class="d-block d-sm-none">Prev</span>
-              </a>
-            {{ end -}}
+            {{ if not .IsHome }}
+              {{- with ($.Scratch.Get "prevPage") -}}
+                <a class="nav nav-prev" href="{{ .RelPermalink }}">
+                  <i class="fas fa-chevron-left me-2"></i>
+                  <span class="d-none d-sm-block">{{ .Title }}</span>
+                  <span class="d-block d-sm-none">Prev</span>
+                </a>
+              {{ end -}}
+            {{ end }}
             {{- with ($.Scratch.Get "nextPage") -}}
               <a class="nav nav-next" href="{{ .RelPermalink }}">
                 <span class="d-none d-sm-block">{{ .Title }}</span>
