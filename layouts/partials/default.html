@@ -167,7 +167,7 @@
             {{ end }}"
             type="button"
             data-gh-toggle="collapse"
-            data-gh-target="#{{ .Title | urlize }}">
+            data-gh-target="#un-{{ .Title | urlize }}">
             <i class="fa-solid fa-chevron-right"></i>
             <i class="fa-solid fa-chevron-down"></i>
           </button>
@@ -175,7 +175,7 @@
       </div>
       {{ $numberOfPages := (add (len .Pages) (len .Sections)) }}
       {{ if ne $numberOfPages 0 }}
-        <ul id="{{ .Title | urlize }}">
+        <ul id="un-{{ .Title | urlize }}">
           {{ $currentNode.Scratch.Set "pages" .Pages }}
           {{ if .Sections }}
             {{ $currentNode.Scratch.Set "pages" (.Pages | union .Sections) }}
