@@ -85,7 +85,11 @@
 
     let filteredJSON = jsonData.reduce((prev, item) => [...new Set([...prev, item.section])], []).map((item) => {
       let filteredItems = jsonData.filter((i) => {
-        return i.section == item;
+        if (!restrictedSearch) {
+          return i.section == item && !i.dedicated_page;
+        } else {
+          return i.section == item;
+        }
       });
 
       return {
@@ -94,7 +98,7 @@
       };
     });
 
-    if(restrictedSearch){
+    if (restrictedSearch) {
       filteredJSON = filteredJSON.filter((item) => {
         return item.section == currentSection;
       });
@@ -150,5 +154,4 @@
     searchResult.innerHTML = htmlString;
   };
   loadJsonData();
-
 </script>
