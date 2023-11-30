@@ -1,18 +1,6 @@
 {{- $len := sub (len (.Pages.GroupBy "Section")) 1 -}}
 [{{- range $item, $el := .Pages.GroupBy "Section" -}}
   {{- range $i, $e := .Pages -}}
-    {{- if and (not .Params.ignoreSearch) (ne $e.Type "json") -}}
-      {
-        {{ with site.GetPage .Section }} {{ if .Params.dedicated_page}} "dedicated_page": true, {{end}} {{end}}
-        "section": "{{$e.Section | humanize}}",
-        "url": "{{ $e.Permalink }}",
-        "title": "{{ with $e.Params.bannertext }}{{htmlEscape .}}{{else}}{{htmlEscape $e.Title}}{{end}}",
-        "description": "{{ htmlEscape .Description}}",
-        "searchKeyword": "{{ htmlEscape .Params.searchKeyword}}",
-        "content": {{$e.Plain | jsonify}}
-      },
-    {{- end -}}
-
     {{- if .Section -}}
       {{- $section := (where site.Pages "Section" .Section) | intersect (where site.Pages ".Title" "!=" .Title) -}}
       {{- $sectionLen := len (where site.Pages "Section" .Section) -}}

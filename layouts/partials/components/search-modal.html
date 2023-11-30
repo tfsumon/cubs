@@ -127,31 +127,51 @@
 
   const displayResult = (searchItems, searchString) => {
     const htmlString = searchItems.map((item) => {
-      const contentValue = item.data.filter((d) => d.content?.toLowerCase().includes(searchString)).map((innerItem) =>  {
-        const position = innerItem.content?.toLowerCase().indexOf(searchString.toLowerCase());
-        let matches = innerItem.content?.substring(position, searchString.length + position);
-        let matchesAfter = innerItem.content?.substring(searchString.length + position, searchString.length + position + 100);
-        const highlighted = innerItem.content?.replace(innerItem.content, '<mark>' + matches + '</mark>' + matchesAfter);
-        return highlighted;
-      });
+      const highlightResult = (content) => {
+        const regex = new RegExp(searchString, "i");
+        console.log(content.replace(regex, (match) => `<u>${match}</u>`));
+        return content.replace(regex, (match) => `<u>${match}</u>`);
+      };
 
-      return`
-      <div class="search-result-item">
-        <p class="section">${item.section}</p>
-        ${item.data.filter((d) =>
-          d.title?.toLowerCase().includes(searchString) ||
-          d.description?.toLowerCase().includes(searchString) ||
-          d.searchKeyword?.toLowerCase().includes(searchString) ||
-          d.content?.toLowerCase().includes(searchString)).map((innerItem) =>
-            `<a class="block" href="${innerItem.url}">
-              <p class="text-dark mb-0 lh-base">${innerItem.title}</p>
-              <span></span>
-              <p class="small text-muted mt-1 mb-0 lh-base">${contentValue}</p>
-            </a>`
-          ).join("")}
-      </div>`
+      const highlightResultContent = (content) => {
+        const regex = new RegExp(searchString, "i");
+        const matchIndex = content.search(regex);
+
+        if (matchIndex >= 0) {
+          const matchedContent = content.slice(matchIndex);
+          const lastWord = content.slice(0, matchIndex).split(" ").pop();
+
+          return matchedContent.replace(
+            regex,
+            (match) => lastWord + `<mark>${match}</mark>`
+          );
+        }
+
+        console.log(content);
+
+        return content;
+      };
+      
+      if (item.data && item.data.length > 0) {
+        return`
+          <div class="search-result-item">
+            <p class="section">${item.section}</p>
+            ${item.data.filter((d) =>
+              d.title?.toLowerCase().includes(searchString) ||
+              d.searchKeyword?.toLowerCase().includes(searchString) ||
+              d.content?.toLowerCase().includes(searchString)).map((innerItem, index) =>
+                `<a class="block" href="${innerItem.url}">
+                  <p class="text-dark mb-0 lh-base">${highlightResult(innerItem.title)}</p>
+                  <span></span>
+                  <p class="small text-muted mt-1 mb-0 lh-base">${highlightResultContent(innerItem.content)}</p>
+                </a>`
+              ).join("")}
+          </div>`
+      }
     }).join("");
+
     searchResult.innerHTML = htmlString;
   };
+
   loadJsonData();
 </script>
